@@ -2,6 +2,7 @@ const express = require('express');
 const upload = require('../fileupload/upload')
 const Grid = require('gridfs-stream');
 const mongoose = require('mongoose');
+const User = require('../models/User');
 
 const router = express.Router();
 
@@ -31,8 +32,15 @@ router.get('/', (req, res) => {
     res.render('index');
 })
 
-router.post('/upload', upload.single('file'), (req, res) => {
-    res.redirect('/')
+router.post('/upload', upload.single('file'), async (req, res) => {
+    try{
+        const newUser = await User({name: req.body.name, profilephoto: `http://localhost:5000/image/${req.file.filename}`}).save();
+        console.log(newUser);
+        return res.status(200).send("Success");
+    }
+    catch(error){
+        console.log(error);
+    }
 })
 
 
